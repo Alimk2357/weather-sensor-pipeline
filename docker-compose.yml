@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=apppass
+      - POSTGRES_DB=appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - weather-pipeline
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - weather-pipeline
+    depends_on:
+      - postgres-db
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    networks:
+      - weather-pipeline
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - weather-pipeline
+    depends_on:
+      - elasticsearch
+
+  sensor-api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: sensor-api
+    ports:
+      - "8000:8000"
+    networks:
+      - weather-pipeline
+
+  nifi:
+    build:
+      context: .
+      dockerfile: nifi/Dockerfile
+    container_name: nifi
+    ports:
+      - "8443:8443"
+    environment:
+      - NIFI_WEB_HTTPS_PORT=8443
+      - SINGLE_USER_CREDENTIALS_USERNAME=nifi
+      - SINGLE_USER_CREDENTIALS_PASSWORD=NifiNifi_12345!
+    volumes:
+      - ./pydantic:/opt/nifi/nifi-current/pydantic_scripts
+    networks:
+      - weather-pipeline
+
+volumes:
+  pg-data:
+  pgadmin-data:
+
+networks:
+  weather-pipeline:
+    driver: bridge
