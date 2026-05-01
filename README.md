@@ -149,7 +149,8 @@ Enable **terminate** for:
 
 Click **Apply**
 
-[!WARNING] If both processors show a red **Stopped** icon, configuration is correct.
+🚨  **IMPORTANT**:
+If both processors show a red **Stopped** icon, configuration is correct.
 Right-click → **Start** to begin the data flow.
 
 ---
