@@ -66,7 +66,7 @@ NiFi will fetch data from the API and execute the Pydantic validation script.
 
 #### 1. Access NiFi UI:
 
-* Open: [https://localhost:8443/nifi]
+* Open: `https://localhost:8443/nifi`
 * Accept the security warning if prompted.
 
 **Credentials:**
@@ -131,11 +131,7 @@ Enable **terminate** for:
 
 Then go to **Scheduling**:
 
-* Change `Run Schedule` from `0 sec` to:
-
-  ```
-  24 hours
-  ```
+* Change `Run Schedule` from `0 sec` to `24 hours`.
 
 Click **Apply**
 
@@ -153,20 +149,16 @@ Enable **terminate** for:
 
 Click **Apply**
 
----
-
-If both processors show a red **Stopped** icon, configuration is correct.
+[!WARNING] If both processors show a red **Stopped** icon, configuration is correct.
 Right-click → **Start** to begin the data flow.
 
 ---
 
 ### B. Observing and Validating Results (Expected Output)
 
----
-
 #### 1. PostgreSQL Validation via pgAdmin
 
-1. Open: [http://localhost:5050]
+1. Open: `http://localhost:5050`
    Login:
 
    * Email: `admin@example.com`
@@ -200,7 +192,7 @@ Out of 10 generated records, exactly **7 valid rows** should be stored.
 
 Invalid data (e.g., wind speed > 150 km/h) is logged into Elasticsearch.
 
-1. Open: [http://localhost:5601]
+1. Open: `http://localhost:5601`
 2. Go to **Discover**
 3. Click **Create Data View**
 
@@ -219,7 +211,7 @@ Add fields:
 
 * `error_details.msg`
 * `original_data.sensor_id`
-* `error_details.loc` (optional)
+* `error_details.loc`
 
 ---
 
